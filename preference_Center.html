@@ -1087,57 +1087,50 @@
     <body>
         <div style="display:none;">
         %%[
-            /*
+            	/*
                 THIS PREFERENCE PAGE WILL BE REACHED VIA CLICKING ON A LINK IN THE EMAIL FOOTER
                 THE VARIABLES WILL BE ENCRYPTED IN THE LINK FROM THE EMAIL
                 IF THE FOLLOWING TWO VARIABLES ARE EMPTY, IT INDICATES THAT THE VISITOR DID NOT COME
                 TO THE PREFERENCE CENTER THROUGH AN EMAIL AND WE SHOULD DISPLAY A MESSAGE
-            */
-            SET @SubscriberKey = PersonContactId
-            SET @EmailAddress = PersonEmail
+            	*/
 
-            /*SET @SubscriberKey = "100000213"
-            SET @EmailAddress = "mbolton.10000.0213@hotmail.marketingclouddemo.com"*/
+		/* SUBSCRIBERKEY AND EMAIL SETUP */
 
             IF EMPTY(@SubscriberKey) OR EMPTY(@EmailAddress) THEN
-
                 SET @error = true
-
             ELSE
                 /*
                 THE CLOUDPAGEURL WILL BE USED TO INDICATE THE PAGE THAT THE CONTENT WILL POST TO AFTER THE SUBSCRIBER SUBMITS
                 THE FORM
                 */
 
-                SET @thankYouLink = CloudPagesURL(https://github.com/sb-techman/eightcap-pc/blob/main/PreferenceConfirmation.html)
-                SET @unsubAll = CloudPagesURL(https://github.com/sb-techman/eightcap-pc/blob/main/UnsubscribeConfirmation.html)
+                SET @thankYouLink = CloudPagesURL(https://github.com/sb-techman/eightcap-pc/blob/8265031620a5b3996b07adbe2b9001e7fa2f6136/PreferenceConfirmation.html)
+                SET @unsubAll = CloudPagesURL(https://github.com/sb-techman/eightcap-pc/blob/8265031620a5b3996b07adbe2b9001e7fa2f6136/UnsubscribeConfirmation.html)
+				
+				
+				SET @data = LookupRows("8C Account Salesforce PC Non Partner","emailaddr", @EmailAddress, '_subscriberkey', @SubscriberKey) 
+				SET @rowCount = RowCount(@data)
 
-                IF Length(@EmailAddress) > 0 THEN
-                    /*The following code will lookup an existing contact automatically if you wire this up to a "complete your profile" email as part of your customer journey */
-                    SET @data = LookupRows("8C Account Salesforce PC Non Partner","PersonEmail", @EmailAddress, 'PersonContactId', @SubscriberKey)
-                    SET @rowCount = RowCount(@data) 
-                    IF @rowCount > 0 THEN 
-                        SET @row = Row(@data, 1) 
-                        SET @FirstName = Field(@row, "FirstName") 
-                        SET @LastName = Field(@row, "LastName") 
+                IF (NOT EMPTY(@SubscriberKey) == true AND @rowCount >= 1 THEN 
+                    
+					/*The following code will lookup an existing contact automatically if you wire this up to a "complete your profile" email as part of your customer journey */
+                    SET @row = Row(@data, 1) 
+                    SET @FirstName = Field(@row, "FirstName") 
+                    SET @LastName = Field(@row, "LastName") 
 
-                        SET @WeekAhead = Field(@row, "Pref_Week_Ahead__c") 
-                        SET @TradeIdeas = Field(@row, "Pref_Daily_Trade_Ideas__c") 
-						SET @WebinarsLiveEvents = Field(@row, "Pref_Webinars_Live_Events__c") 
-						SET @Education = Field(@row, "Pref_Education__c") 
-						SET @PromotionalOff = Field(@row, "Pref_Promotions__c") 
+                    SET @WeekAhead = Field(@row, "Pref_Week_Ahead__c") 
+                    SET @TradeIdeas = Field(@row, "Pref_Daily_Trade_Ideas__c") 
+					SET @WebinarsLiveEvents = Field(@row, "Pref_Webinars_Live_Events__c") 
+					SET @Education = Field(@row, "Pref_Education__c") 
+					SET @PromotionalOff = Field(@row, "Pref_Promotions__c") 
 
-						SET @Experience = Field(@row, "Pref_Experience__c") 
-						SET @Category = Field(@row, "Pref_Prime_Category__c") 
-                        SET @Interest = Field(@row, "Pref_Prime_Asset__c")
+					SET @Experience = Field(@row, "Pref_Experience__c") 
+					SET @Category = Field(@row, "Pref_Prime_Category__c") 
+                    SET @Interest = Field(@row, "Pref_Prime_Asset__c") 
                         
-                    ELSE
-                        SET @Error = true
-                    ENDIF
-                ELSE
+                 ELSE
                     SET @Error = true
-                ENDIF
-
+                ENDIF0
             ENDIF
         ]%%
         </div>
