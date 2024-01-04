@@ -1112,25 +1112,21 @@
 				SET @rowCount = RowCount(@data)
 
                 IF (NOT EMPTY(@SubscriberKey) == true AND @rowCount >= 1 THEN 
-                    
-					/*The following code will lookup an existing contact automatically if you wire this up to a "complete your profile" email as part of your customer journey */
+		    /*The following code will lookup an existing contact automatically if you wire this up to a "complete your profile" email as part of your customer journey */
                     SET @row = Row(@data, 1) 
                     SET @FirstName = Field(@row, "FirstName") 
                     SET @LastName = Field(@row, "LastName") 
-
                     SET @WeekAhead = Field(@row, "Pref_Week_Ahead__c") 
                     SET @TradeIdeas = Field(@row, "Pref_Daily_Trade_Ideas__c") 
-					SET @WebinarsLiveEvents = Field(@row, "Pref_Webinars_Live_Events__c") 
-					SET @Education = Field(@row, "Pref_Education__c") 
-					SET @PromotionalOff = Field(@row, "Pref_Promotions__c") 
-
-					SET @Experience = Field(@row, "Pref_Experience__c") 
-					SET @Category = Field(@row, "Pref_Prime_Category__c") 
-                    SET @Interest = Field(@row, "Pref_Prime_Asset__c") 
-                        
+		    SET @WebinarsLiveEvents = Field(@row, "Pref_Webinars_Live_Events__c") 
+		    SET @Education = Field(@row, "Pref_Education__c") 
+		    SET @PromotionalOff = Field(@row, "Pref_Promotions__c") 
+		    SET @Experience = Field(@row, "Pref_Experience__c") 
+		    SET @Category = Field(@row, "Pref_Prime_Category__c") 
+                    SET @Interest = Field(@row, "Pref_Prime_Asset__c")        
                  ELSE
                     SET @Error = true
-                ENDIF0
+                ENDIF
             ENDIF
         ]%%
         </div>
