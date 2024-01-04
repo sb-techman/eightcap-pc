@@ -1087,42 +1087,33 @@
     <body>
         <div style="display:none;">
         %%[
-            /*
-                THIS PREFERENCE PAGE WILL BE REACHED VIA CLICKING ON A LINK IN THE EMAIL FOOTER
+            /*THIS PREFERENCE PAGE WILL BE REACHED VIA CLICKING ON A LINK IN THE EMAIL FOOTER
                 THE VARIABLES WILL BE ENCRYPTED IN THE LINK FROM THE EMAIL
                 IF THE FOLLOWING TWO VARIABLES ARE EMPTY, IT INDICATES THAT THE VISITOR DID NOT COME
                 TO THE PREFERENCE CENTER THROUGH AN EMAIL AND WE SHOULD DISPLAY A MESSAGE
             */
-			
+			var @SubscriberKey, @EmailAddress 
             SET @SubscriberKey = _subscriberkey
-            SET @EmailAddress = emailaddr
+            SET @EmailAddress = PersonEmail 
 
-            /*SET @SubscriberKey = "0030o00003ZW8vkAAD"
-            SET @EmailAddress = "mr.stephenbenjamin@gmail.com"*/
+            /*SET @SubscriberKey = "0030o00003ZW8vkAAD" 
+            SET @EmailAddress = "mr.stephenbenjamin@gmail.com"*/ 
 
-            IF EMPTY(@SubscriberKey) OR EMPTY(@EmailAddress) THEN
-                SET @error = true
-            ELSE
-                /*
-                THE CLOUDPAGEURL WILL BE USED TO INDICATE THE PAGE THAT THE CONTENT WILL POST TO AFTER THE SUBSCRIBER SUBMITS
-                THE FORM
-                */
-
-                SET @thankYouLink = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/PreferenceConfirmation.html)
-                SET @unsubAll = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/UnsubscribeConfirmation.html)
+            IF EMPTY(@SubscriberKey) OR EMPTY(@EmailAddress) THEN 
+                SET @error = true 
+            ELSE 
+                SET @thankYouLink = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/PreferenceConfirmation.html) 
+                SET @unsubAll = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/UnsubscribeConfirmation.html) 
 				
-				IF Length(@EmailAddress) > 0 THEN
-                    
-					/*The following code will lookup an existing contact automatically if you wire this up to a "complete your profile" email as part of your customer journey */ 
+				IF Length(@EmailAddress) > 0 THEN 
+ 
 					
-					SET @data = LookupRows("8C Account Salesforce PC Non Partner","emailaddr", @EmailAddress, '_subscriberkey', @SubscriberKey) 
-					SET @rowCount = RowCount(@data)
+					SET @data = LookupRows("8C_Account_PC_Non_Partner","emailaddr", @EmailAddress, '_subscriberkey', @SubscriberKey) 
+					SET @rowCount = RowCount(@data) 
 					
-					IF @rowCount > 0 THEN
-					
-					
-					
-						SET @row = Row(@data, 1)
+					IF @rowCount > 0 THEN 
+
+						SET @row = Row(@data, 1) 
 						SET @FirstName = Field(@row, "FirstName") 
 						SET @LastName = Field(@row, "LastName") 
 
@@ -1412,47 +1403,6 @@
             ]%%
         </div>
 
-        <script>
-        // var button = $('#submitBtn');
-        // var orig = [];
-
-        // $.fn.getType = function() {
-        //     return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
-        // }
-
-        // $("#mainFormBody :input").each(function() {
-        //     var type = $(this).getType();
-        //     var tmp = {
-        //         'type': type,
-        //         'value': $(this).val()
-        //     };
-        //     if (type == 'radio') {
-        //         tmp.checked = $(this).is(':checked');
-        //     }
-        //     orig[$(this).attr('id')] = tmp;
-        // });
-
-        // $('#mainFormBody').bind('change keyup', function() {
-
-        //     var disable = true;
-        //     $("form :input").each(function() {
-        //         var type = $(this).getType();
-        //         var id = $(this).attr('id');
-
-        //         if (type == 'text' || type == 'select') {
-        //             disable = (orig[id].value == $(this).val());
-        //         } else if (type == 'radio') {
-        //             disable = (orig[id].checked == $(this).is(':checked'));
-        //         }
-
-        //         if (!disable) {
-        //             return false; // break out of loop
-        //         }
-        //     });
-
-        //     button.prop('disabled', disable);
-        // });
-        </script>
     </body>
 
 </html>
