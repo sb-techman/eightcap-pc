@@ -1085,37 +1085,41 @@
     </head>
 
     <body>
-        <div style="display:none;">
+        <div style="display: none;">
         %%[
-            /*THIS PREFERENCE PAGE WILL BE REACHED VIA CLICKING ON A LINK IN THE EMAIL FOOTER
-                THE VARIABLES WILL BE ENCRYPTED IN THE LINK FROM THE EMAIL
-                IF THE FOLLOWING TWO VARIABLES ARE EMPTY, IT INDICATES THAT THE VISITOR DID NOT COME
-                TO THE PREFERENCE CENTER THROUGH AN EMAIL AND WE SHOULD DISPLAY A MESSAGE
-            */
-			var @SubscriberKey, @EmailAddress 
-            SET @SubscriberKey = _subscriberkey
+            /* ---------- THIS PREFERENCE PAGE WILL BE REACHED VIA CLICKING ON A LINK IN THE EMAIL FOOTER ---------- */ 
+            /* ---------- THE VARIABLES WILL BE ENCRYPTED IN THE LINK FROM THE EMAIL ---------- */ 
+            /* ---------- IF THE FOLLOWING TWO VARIABLES ARE EMPTY IT INDICATES THAT THE VISITOR DID NOT COME ---------- */ 
+            /* ---------- TO THE PREFERENCE CENTER THROUGH AN EMAIL AND WE SHOULD DISPLAY A MESSAGE ---------- */ 
+
+
+			/* ---------- CHECK FOR SUBSCRIBER KEY AND EMAIL  ---------- */ 
+			VAR @SubscriberKey, @EmailAddress, @error, @SalesTeam, @thankYouLink, @unsubAll, @data, @rowCount, @row, @FirstName, @LastName, @WeekAhead, @TradeIdeas, @WebinarsLiveEvents, @Education, @PromotionalOff, @Experience, @Category, @Interest   
+            
+			SET @SubscriberKey = _subscriberkey
             SET @EmailAddress = PersonEmail 
 
-            /*SET @SubscriberKey = "0030o00003ZW8vkAAD" 
-            SET @EmailAddress = "mr.stephenbenjamin@gmail.com"*/ 
-
+            /*SET @SubscriberKey = 0030o00003ZW8vkAAD*/
+            /*SET @EmailAddress = mr.stephenbenjamin@gmail.com*/ 
+			
+			/* ---------- CHECK FOR SUBSCRIBER KEY AND EMAIL  ---------- */ 
             IF EMPTY(@SubscriberKey) OR EMPTY(@EmailAddress) THEN 
+			/* ---------- IF NO SUBSCRIBER KEY AND EMAIL SET ERROR TO TRUE  ---------- */ 
                 SET @error = true 
             ELSE 
-                SET @thankYouLink = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/PreferenceConfirmation.html) 
-                SET @unsubAll = CloudPagesURL(https://sb-techman.github.io/eightcap-pc/UnsubscribeConfirmation.html) 
+                SET @thankYouLink = /* CloudPagesURL(https://sb-techman.github.io/eightcap-pc/PreferenceConfirmation.html) */ 
+                SET @unsubAll = /* CloudPagesURL(https://sb-techman.github.io/eightcap-pc/UnsubscribeConfirmation.html) */ 
 				
 				IF Length(@EmailAddress) > 0 THEN 
- 
-					
 					SET @data = LookupRows("8C_Account_PC_Non_Partner","emailaddr", @EmailAddress, '_subscriberkey', @SubscriberKey) 
 					SET @rowCount = RowCount(@data) 
 					
 					IF @rowCount > 0 THEN 
-
 						SET @row = Row(@data, 1) 
 						SET @FirstName = Field(@row, "FirstName") 
 						SET @LastName = Field(@row, "LastName") 
+						
+						SET @SalesTeam = Field(@row, "Sales_Team__c") 
 
 						SET @WeekAhead = Field(@row, "Pref_Week_Ahead__c") 
 						SET @TradeIdeas = Field(@row, "Pref_Daily_Trade_Ideas__c") 
@@ -1294,9 +1298,9 @@
 													<select name="language" id="language" style="width: 140px; height: 30px;">
 														<option value="" disabled selected>Choose a experience</option>
 														<option value="< 1" %%[ IF indexOf(@Experience,'Less Than 1 Year') ==true THEN ]%%selected %%[ ENDIF ]%%>Less Than 1 Year'</option>
-														<option value="1-2 years" %%[ IF indexOf(@Experience,'1-2 Years') ==true THEN ]%%selected %%[ ENDIF ]%%>1-2 years</option>
-														<option value="3-4 years" %%[ IF indexOf(@Experience,'3-4 Years') ==true THEN ]%%selected %%[ ENDIF ]%%>3-4 years</option>
-														<option value="5+" %%[ IF indexOf(@Experience,'5+') ==true THEN ]%%selected %%[ ENDIF ]%%>5+</option>
+														<option value="1-2 years" %%[ IF indexOf(@Experience,'1-3 Years') ==true THEN ]%%selected %%[ ENDIF ]%%>1-3 years</option>
+														<option value="3-4 years" %%[ IF indexOf(@Experience,'3-5 Years') ==true THEN ]%%selected %%[ ENDIF ]%%>3-5 years</option>
+														<option value="5+" %%[ IF indexOf(@Experience,'5+ Years') ==true THEN ]%%selected %%[ ENDIF ]%%>5+ Years</option>
 													</select>
 											</div>
                                         </div>
@@ -1335,7 +1339,10 @@
 														<option value="Forex" %%[ IF indexOf(@Category,'Forex') ==true THEN ]%%selected %%[ ENDIF ]%%>Forex</option>
 														<option value="Commodities" %%[ IF indexOf(@Category,'Commodities') ==true THEN ]%%selected %%[ ENDIF ]%%>Commodities</option>
 														<option value="Indices" %%[ IF indexOf(@Category,'Indices') ==true THEN ]%%selected %%[ ENDIF ]%%>Indices</option>
+														%%[ IF indexOf(@SalesTeam,'UK') > 0 TRUE OR indexOf(@SalesTeam,'CN') > 0 TRUE THEN ]%%
+														%%[ ELSE ]%%
 														<option value="Crypto" %%[ IF indexOf(@Category,'Crypto') ==true THEN ]%%selected %%[ ENDIF ]%%>Crypto</option>
+														%%[ ENDIF ]%%
 													</select>
 											</div>
                                         </div>
@@ -1377,7 +1384,10 @@
 														<option id="general_commodities" name="general_commodities" value="Commodities" %%[ IF indexOf(@Interest,'General Commodities') == true THEN ]%%selected %%[ ENDIF ]%%>General Commodities</option>
 														<option id="indexes" name="indexes" value="Indexes" %%[ IF indexOf(@Interest,'Indexes') == true THEN ]%%selected %%[ ENDIF ]%%>Indexes</option>
 														<option id="stocks" name="stocks" value="Stocks" %%[ IF indexOf(@Interest,'Stocks') == true THEN ]%%selected %%[ ENDIF ]%%>Stocks</option>
+														%%[ IF indexOf(@SalesTeam,'UK') > 0 TRUE OR indexOf(@SalesTeam,'CN') > 0 TRUE THEN ]%%
+														%%[ ELSE ]%%
 														<option id="general_currencies" name="general_currencies" value="Cryptocurrencies" %%[ IF indexOf(@Interest,'Cryptocurrencies') == true THEN ]%%selected %%[ ENDIF ]%%>Cryptocurrencies</option>
+														%%[ ENDIF ]%%
 													</select>
 											</div>
                                         </div>
@@ -1402,7 +1412,47 @@
                 ENDIF
             ]%%
         </div>
+		<script>
+        // var button = $('#submitBtn');
+        // var orig = [];
 
+        // $.fn.getType = function() {
+        //     return this[0].tagName == "INPUT" ? $(this[0]).attr("type").toLowerCase() : this[0].tagName.toLowerCase();
+        // }
+
+        // $("#mainFormBody :input").each(function() {
+        //     var type = $(this).getType();
+        //     var tmp = {
+        //         'type': type,
+        //         'value': $(this).val()
+        //     };
+        //     if (type == 'radio') {
+        //         tmp.checked = $(this).is(':checked');
+        //     }
+        //     orig[$(this).attr('id')] = tmp;
+        // });
+
+        // $('#mainFormBody').bind('change keyup', function() {
+
+        //     var disable = true;
+        //     $("form :input").each(function() {
+        //         var type = $(this).getType();
+        //         var id = $(this).attr('id');
+
+        //         if (type == 'text' || type == 'select') {
+        //             disable = (orig[id].value == $(this).val());
+        //         } else if (type == 'radio') {
+        //             disable = (orig[id].checked == $(this).is(':checked'));
+        //         }
+
+        //         if (!disable) {
+        //             return false; // break out of loop
+        //         }
+        //     });
+
+        //     button.prop('disabled', disable);
+        // });
+        </script>
     </body>
 
 </html>
